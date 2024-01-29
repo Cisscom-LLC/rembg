@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 
 
-def smooth(content, threshold, sigma_color, sigma_space):
+def smooth(content, threshold, sigma_color, sigma_space, return_img = False):
     nparr = np.fromstring(content, np.uint8)
     roi_img = cv.imdecode(nparr, cv.IMREAD_COLOR)
     temp_img = roi_img.copy()
@@ -21,12 +21,14 @@ def smooth(content, threshold, sigma_color, sigma_space):
     masked_img2 = cv.bitwise_and(temp_img, inverted_mask)
     # Add the masked images together
     output_img = cv.add(masked_img2, masked_img)
+
+    if return_img:
+        return output_img
     retval, buffer = cv.imencode('.png', output_img)
     return buffer.tobytes()
 
-def grayscale(content):
-    nparr = np.fromstring(content, np.uint8)
-    roi_img = cv.imdecode(nparr, cv.IMREAD_COLOR)
-    output_img = cv.cvtColor(roi_img, cv.COLOR_BGR2GRAY)
+def grayscale_smooth(content, threshold, sigma_color, sigma_space):
+    glam_img = smooth(content, threshold, sigma_color, sigma_space, return_img = True)
+    output_img = cv.cvtColor(glam_img, cv.COLOR_BGR2GRAY)
     retval, buffer = cv.imencode('.png', output_img)
     return buffer.tobytes()
