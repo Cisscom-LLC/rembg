@@ -15,14 +15,15 @@ from starlette.responses import Response
 
 from .._version import get_versions
 from ..bg import remove
-from ..filters import smooth, grayscale_smooth
+from ..filters import smooth, grayscale_smooth, grayscale
 from ..session_factory import new_session
 from ..sessions import sessions_names
 from ..sessions.base import BaseSession
 
 filter_names = [
     "glam",
-    "glam_grayscale"
+    "glam_grayscale",
+    "grayscale"
 ]
 
 @click.command(  # type: ignore
@@ -246,6 +247,12 @@ def s_command(port: int, host: str, log_level: str, threads: int) -> None:
             )
         elif filter_params.name == "glam_grayscale":
             img = grayscale_smooth(content, filter_params.threshold, filter_params.sigma_color, filter_params.sigma_space)
+            return Response(
+                img,
+                media_type="image/png",
+            )
+        elif filter_params.name == "grayscale":
+            img = grayscale(content, filter_params.threshold, filter_params.sigma_color, filter_params.sigma_space)
             return Response(
                 img,
                 media_type="image/png",
