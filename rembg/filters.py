@@ -27,8 +27,18 @@ def smooth(content, threshold, sigma_color, sigma_space, return_img = False):
     retval, buffer = cv.imencode('.png', output_img)
     return buffer.tobytes()
 
+
 def grayscale_smooth(content, threshold, sigma_color, sigma_space):
     glam_img = smooth(content, threshold, sigma_color, sigma_space, return_img = True)
     output_img = cv.cvtColor(glam_img, cv.COLOR_BGR2GRAY)
     retval, buffer = cv.imencode('.png', output_img)
+    return buffer.tobytes()
+
+
+def grayscale(content, threshold, sigma_color, sigma_space):
+    nparr = np.fromstring(content, np.uint8)
+    roi_img = cv.imdecode(nparr, cv.IMREAD_COLOR)
+    temp_img = roi_img.copy()
+    gray_img = cv.cvtColor(roi_img, cv.COLOR_BGR2GRAY)
+    retval, buffer = cv.imencode('.png', gray_img)
     return buffer.tobytes()
